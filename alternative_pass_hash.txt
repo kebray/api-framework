@@ -1,0 +1,6 @@
+If you do decide to go with hashing passwords, PBKDF2 is going to be a lot stronger than using a simple salted SHA. FWIW, PassLib supports it:
+
+http://pythonhosted.org//passlib/lib/passlib.hash.pbkdf2_digest.html
+
+The idea is to make the hashing fast enough that a user doesn’t notice the delay, but slow enough to thwart attacks.
+
