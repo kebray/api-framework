@@ -46,6 +46,9 @@ class User(db.Model):
         user = User.query.get(data['id'])
         return user
 
+def verify_admin():
+    if g.user.username == 'keith':
+        return True
 
 @auth.verify_password
 def verify_password(username_or_token, password):
@@ -75,8 +78,26 @@ def new_user():
     return (jsonify({'username': user.username}), 201,
             {'Location': url_for('get_user', id=user.id, _external=True)})
 
+@app.route('/api/users', methods=['GET'])
+@auth.login_required
+def get_users():
+    if verify_admin() == None:
+        # must enter proper response code here
+        return "404 -- Not Authorized"
+    print g.user.username  # user who is making the request
+    users = User.query.all()
+    lst = []
+    for user in users:
+        d = {}
+        d['username'] = user.username
+        d['id'] = user.id
+        lst.append(d)
+    myd = {'users': lst}
+    return jsonify(myd)
+
 
 @app.route('/api/users/<int:id>')
+@auth.login_required
 def get_user(id):
     user = User.query.get(id)
     if not user:
